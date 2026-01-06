@@ -10,9 +10,10 @@ export interface ProductCardProps {
   salePrice: number;
   discountPercentage: number;
   unit?: string;
+  onProductClick?: (name: string) => void;
 }
 
-const ProductCard = ({ name, image, regularPrice, salePrice, discountPercentage, unit = "1" }: ProductCardProps) => {
+const ProductCard = ({ name, image, regularPrice, salePrice, discountPercentage, unit = "1", onProductClick }: ProductCardProps) => {
   const { cartItems, addToCart, updateQuantity } = useCart();
   const cartItem = cartItems.find((item) => item.name === name);
   const quantity = cartItem?.quantity || 0;
@@ -22,8 +23,10 @@ const ProductCard = ({ name, image, regularPrice, salePrice, discountPercentage,
   };
 
   return (
-    <div className="flex flex-col gap-2 w-full animate-in fade-in zoom-in duration-500">
-
+    <div
+      className="flex flex-col gap-2 w-full animate-in fade-in zoom-in-95 slide-in-from-bottom-2 duration-500 ease-out cursor-pointer"
+      onClick={() => onProductClick?.(name)}
+    >
       {/* Visual Image Container (Green Card) */}
       <div className="relative w-full aspect-square bg-[#76B079] rounded-2xl md:rounded-3xl p-4 flex items-center justify-center group overflow-hidden">
         {/* Product Name Top Overlay (Optional per screenshot specific cards, trying to match 'Cabbage' style) */}
@@ -40,7 +43,7 @@ const ProductCard = ({ name, image, regularPrice, salePrice, discountPercentage,
         />
 
         {/* Add Button / Quantity Selector */}
-        <div className="absolute bottom-2 right-2 md:bottom-3 md:right-3 z-20">
+        <div className="absolute bottom-2 right-2 md:bottom-3 md:right-3 z-20" onClick={(e) => e.stopPropagation()}>
           {quantity === 0 ? (
             <button
               onClick={handleAdd}

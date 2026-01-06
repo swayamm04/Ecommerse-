@@ -62,7 +62,10 @@ const Header = () => {
               >
                 <ShoppingBag className="w-5 h-5" />
                 {cartCount > 0 && (
-                  <span className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-[#EFC41A] text-[10px] font-bold text-black rounded-full flex items-center justify-center">
+                  <span
+                    key={cartCount}
+                    className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-[#EFC41A] text-[10px] font-bold text-black rounded-full flex items-center justify-center animate-pop"
+                  >
                     {cartCount}
                   </span>
                 )}

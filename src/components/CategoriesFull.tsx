@@ -1,14 +1,23 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { categories } from "@/data/categories";
 import { products } from "@/data/products";
 import ProductCard from "./ProductCard";
+import { Skeleton } from "./ui/skeleton";
 
 interface CategoriesFullProps {
     defaultCategory?: string;
+    onProductClick?: (name: string) => void;
 }
 
-const CategoriesFull = ({ defaultCategory }: CategoriesFullProps) => {
+const CategoriesFull = ({ defaultCategory, onProductClick }: CategoriesFullProps) => {
     const [selectedCategory, setSelectedCategory] = useState(defaultCategory || categories[0].name);
+    const [isLoading, setIsLoading] = useState(false);
+
+    useEffect(() => {
+        setIsLoading(true);
+        const timer = setTimeout(() => setIsLoading(false), 600);
+        return () => clearTimeout(timer);
+    }, [selectedCategory]);
 
     return (
         <div className="min-h-[calc(100vh-180px)] bg-white flex overflow-hidden animate-in fade-in duration-300 mb-20">
@@ -48,10 +57,27 @@ const CategoriesFull = ({ defaultCategory }: CategoriesFullProps) => {
                 </div>
 
                 <div className="p-3 pb-32">
-                    <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6">
-                        {products.map((product, idx) => (
-                            <ProductCard key={idx} {...product} />
-                        ))}
+                    <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+                        {isLoading ? (
+                            Array.from({ length: 6 }).map((_, i) => (
+                                <div key={i} className="flex flex-col gap-3">
+                                    <Skeleton className="w-full aspect-square rounded-2xl md:rounded-3xl" />
+                                    <div className="space-y-2 px-1">
+                                        <Skeleton className="h-4 w-3/4" />
+                                        <Skeleton className="h-3 w-1/2" />
+                                        <Skeleton className="h-4 w-1/4 mt-2" />
+                                    </div>
+                                </div>
+                            ))
+                        ) : (
+                            products.map((product, idx) => (
+                                <ProductCard
+                                    key={idx}
+                                    {...product}
+                                    onProductClick={onProductClick}
+                                />
+                            ))
+                        )}
                     </div>
                 </div>
             </div>

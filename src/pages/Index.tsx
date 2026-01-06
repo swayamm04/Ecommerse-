@@ -12,11 +12,13 @@ import BottomNav from "@/components/BottomNav";
 import CategoriesFull from "@/components/CategoriesFull";
 import Orders from "@/components/Orders";
 import Profile from "@/components/Profile";
+import ProductDetail from "@/components/ProductDetail";
 import { useState } from "react";
 
 const Index = () => {
   const [currentTab, setCurrentTab] = useState("home");
   const [targetCategory, setTargetCategory] = useState("");
+  const [selectedProduct, setSelectedProduct] = useState<string | null>(null);
 
   const handleCategoryClick = (category: string) => {
     setTargetCategory(category);
@@ -35,14 +37,19 @@ const Index = () => {
         {currentTab === "home" && (
           <>
             <CategoryGrid onCategoryClick={handleCategoryClick} />
-            <BannerCarousel />
-            <DealsSection />
+            <BannerCarousel onProductClick={setSelectedProduct} />
+            <DealsSection onProductClick={setSelectedProduct} />
             <TrustSignals />
             <Testimonials />
           </>
         )}
 
-        {currentTab === "categories" && <CategoriesFull defaultCategory={targetCategory} />}
+        {currentTab === "categories" && (
+          <CategoriesFull
+            defaultCategory={targetCategory}
+            onProductClick={setSelectedProduct}
+          />
+        )}
         {currentTab === "orders" && <Orders />}
         {currentTab === "profile" && <Profile />}
 
@@ -53,6 +60,12 @@ const Index = () => {
         <BottomNav activeTab={currentTab} onTabChange={setCurrentTab} />
       </div>
 
+      {selectedProduct && (
+        <ProductDetail
+          productName={selectedProduct}
+          onBack={() => setSelectedProduct(null)}
+        />
+      )}
       <FloatingCart />
       <CartDrawer />
     </div>

@@ -30,7 +30,7 @@ const banners = [
     }
 ];
 
-const BannerCarousel = () => {
+const BannerCarousel = ({ onProductClick }: { onProductClick?: (name: string) => void }) => {
     const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, align: "start" });
 
     const scrollNext = useCallback(() => {
@@ -68,7 +68,10 @@ const BannerCarousel = () => {
                                         <p className={`text-xs md:text-xl ${banner.textColor}/90 mb-3 md:mb-8 font-medium line-clamp-2`}>
                                             {banner.subtitle}
                                         </p>
-                                        <Button className="h-8 md:h-10 text-xs md:text-base bg-white text-gray-900 hover:bg-gray-100 font-bold rounded-full px-4 md:px-8">
+                                        <Button
+                                            onClick={() => onProductClick?.(banner.id === 1 ? "Cabbage" : "Cement")}
+                                            className="h-8 md:h-10 text-xs md:text-base bg-white text-gray-900 hover:bg-gray-100 font-bold rounded-full px-4 md:px-8"
+                                        >
                                             Shop Now <ArrowRight className="w-3 h-3 md:w-4 md:h-4 ml-1 md:ml-2" />
                                         </Button>
                                     </div>
