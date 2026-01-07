@@ -4,9 +4,21 @@ import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import SearchOverlay from "./SearchOverlay";
 
-const Header = () => {
+interface HeaderProps {
+  activeTab?: string;
+  onTabChange?: (tab: string) => void;
+}
+
+const Header = ({ activeTab, onTabChange }: HeaderProps) => {
   const { cartCount, setIsCartOpen } = useCart();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+
+  const navItems = [
+    { id: "home", label: "Home" },
+    { id: "categories", label: "Categories" },
+    { id: "orders", label: "Orders" },
+    { id: "profile", label: "Profile" },
+  ];
 
   return (
     <>
@@ -32,7 +44,7 @@ const Header = () => {
             </div>
 
             {/* Center: Brand Logo */}
-            <a href="/" className="absolute left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 group">
+            <a href="/" className="flex flex-col items-center gap-1 group">
               <div className="bg-[#EFC41A] p-1 rounded-md">
                 <div className="bg-black text-[#EFC41A] p-0.5 rounded-sm">
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
@@ -42,6 +54,25 @@ const Header = () => {
               </div>
               <span className="text-[10px] font-black tracking-widest uppercase">HomeRun</span>
             </a>
+
+            {/* Desktop Navigation */}
+            <nav className="hidden md:flex items-center gap-8 ml-12">
+              {navItems.map((item) => (
+                <button
+                  key={item.id}
+                  onClick={() => onTabChange?.(item.id)}
+                  className={`text-sm font-bold uppercase tracking-wider transition-all duration-300 relative py-1 ${activeTab === item.id
+                      ? "text-[#45a049]"
+                      : "text-gray-500 hover:text-gray-900"
+                    }`}
+                >
+                  {item.label}
+                  {activeTab === item.id && (
+                    <span className="absolute bottom-0 left-0 w-full h-0.5 bg-[#45a049] rounded-full" />
+                  )}
+                </button>
+              ))}
+            </nav>
 
             {/* Right: Actions */}
             <div className="flex items-center gap-5">

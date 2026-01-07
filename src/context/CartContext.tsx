@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, ReactNode } from "react";
+import React, { createContext, useContext, useState, ReactNode, useEffect } from "react";
 
 export interface CartItem {
     id: string; // unique identifier (usually name for now)
@@ -22,8 +22,15 @@ interface CartContextType {
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export const CartProvider = ({ children }: { children: ReactNode }) => {
-    const [cartItems, setCartItems] = useState<CartItem[]>([]);
+    const [cartItems, setCartItems] = useState<CartItem[]>(() => {
+        const saved = localStorage.getItem("homerun_cart");
+        return saved ? JSON.parse(saved) : [];
+    });
     const [isCartOpen, setIsCartOpen] = useState(false);
+
+    useEffect(() => {
+        localStorage.setItem("homerun_cart", JSON.stringify(cartItems));
+    }, [cartItems]);
 
     const addToCart = (product: Omit<CartItem, "quantity">) => {
         setCartItems((prev) => {

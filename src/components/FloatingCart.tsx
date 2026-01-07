@@ -9,10 +9,10 @@ const FloatingCart = () => {
     if (cartItems.length === 0) return null;
 
     return (
-        <div className="fixed bottom-20 left-4 right-4 z-50 md:hidden animate-in slide-in-from-bottom-5 duration-300">
+        <div className="fixed bottom-24 md:bottom-10 left-4 right-4 z-50 flex justify-center animate-in slide-in-from-bottom-5 duration-300 pointer-events-none">
             <div
                 onClick={() => setIsCartOpen(true)}
-                className="bg-[#45a049] text-white rounded-2xl p-3 shadow-2xl flex items-center justify-between cursor-pointer hover:bg-[#388e3c] transition-colors"
+                className="bg-[#45a049] text-white rounded-2xl p-3 shadow-2xl flex items-center justify-between cursor-pointer hover:bg-[#388e3c] transition-all hover:scale-[1.02] active:scale-95 pointer-events-auto w-full max-w-sm"
             >
 
                 {/* Left Side: Items & Icon */}

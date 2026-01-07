@@ -76,7 +76,7 @@ const Index = () => {
     <div className="h-screen flex flex-col bg-background overflow-hidden">
       <div className="flex-none">
         <AnnouncementBar />
-        <Header />
+        <Header activeTab={currentTab} onTabChange={changeTab} />
       </div>
 
       <main ref={mainRef} className="flex-1 overflow-y-auto overflow-x-hidden relative">
