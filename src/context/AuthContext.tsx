@@ -14,6 +14,7 @@ interface User {
     phone: string;
     name?: string;
     photo?: string;
+    password?: string;
     address?: Address;
     savedAddresses?: Address[];
 }
@@ -28,7 +29,11 @@ interface AuthContextType {
     closeLogin: () => void;
     checkUser: (phone: string) => void;
     verifyOtp: (otp: string) => void;
-    completeRegistration: (name: string, photo?: string) => void;
+    login: (phone: string, password: string) => Promise<boolean>;
+    register: (phone: string, name: string, password: string, photo?: string) => Promise<void>;
+    verifyResetOtp: (phone: string, otp: string) => Promise<void>;
+    resetPassword: (phone: string, otp: string, password: string) => Promise<void>;
+    completeRegistration: (name: string, photo?: string) => void; // Keeping for compatibility if needed, but redundant with register
     updateAddress: (address: Address) => void;
     addAddress: (address: Address) => void;
     selectAddress: (address: Address) => void;
@@ -41,6 +46,7 @@ const DUMMY_USERS: Record<string, User> = {
     "9999999999": {
         phone: "9999999999",
         name: "Old User",
+        password: "123456",
         address: {
             pincode: "560035",
             houseNo: "123",
@@ -95,29 +101,85 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     };
 
     const verifyOtp = (otp: string) => {
-        if (otp === "0000") {
-            throw new Error("Invalid OTP");
-        }
+        // Kept for legacy or specific uses, but main flow uses login/register
+        if (otp === "0000") throw new Error("Invalid OTP");
+    };
 
-        const existingUser = DUMMY_USERS[tempPhone];
-        if (existingUser) {
-            setUser(existingUser);
-            // Auto-select the first saved address if available
-            if (existingUser.savedAddresses && existingUser.savedAddresses.length > 0) {
-                setLocation(existingUser.savedAddresses[0]);
-            } else if (existingUser.address) {
-                setLocation(existingUser.address);
-            }
-            closeLogin();
-        } else {
-            setRegistrationRequired(true);
-        }
+    const login = async (phone: string, password: string): Promise<boolean> => {
+        return new Promise((resolve, reject) => {
+            setTimeout(() => {
+                const existingUser = DUMMY_USERS[phone];
+                if (existingUser) {
+                    if (existingUser.password === password) {
+                        setUser(existingUser);
+                        // Auto-select address
+                        if (existingUser.savedAddresses && existingUser.savedAddresses.length > 0) {
+                            setLocation(existingUser.savedAddresses[0]);
+                        } else if (existingUser.address) {
+                            setLocation(existingUser.address);
+                        }
+                        closeLogin();
+                        resolve(true);
+                    } else {
+                        reject(new Error("Invalid password"));
+                    }
+                } else {
+                    reject(new Error("User not found"));
+                }
+            }, 800);
+        });
+    };
+
+    const register = async (phone: string, name: string, password: string, photo?: string): Promise<void> => {
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                const newUser: User = { phone, name, password, photo };
+                // In a real app, we would save to backend. specific to this session:
+                DUMMY_USERS[phone] = newUser;
+                setUser(newUser);
+                closeLogin();
+                resolve();
+            }, 800);
+        });
+    };
+
+    const verifyResetOtp = async (phone: string, otp: string): Promise<void> => {
+        return new Promise((resolve, reject) => {
+            setTimeout(() => {
+                if (otp === "0000" || otp.length !== 4) {
+                    reject(new Error("Invalid OTP"));
+                } else {
+                    resolve();
+                }
+            }, 800);
+        });
+    };
+
+    const resetPassword = async (phone: string, otp: string, password: string): Promise<void> => {
+        return new Promise((resolve, reject) => {
+            setTimeout(() => {
+                if (otp === "0000" || otp.length !== 4) {
+                    reject(new Error("Invalid OTP"));
+                    return;
+                }
+                // Verify user exists
+                const existingUser = DUMMY_USERS[phone];
+                if (!existingUser) {
+                    reject(new Error("User not found"));
+                    return;
+                }
+
+                // Update password
+                existingUser.password = password;
+                DUMMY_USERS[phone] = existingUser;
+                resolve();
+            }, 800);
+        });
     };
 
     const completeRegistration = (name: string, photo?: string) => {
-        const newUser: User = { phone: tempPhone, name, photo };
-        setUser(newUser);
-        closeLogin();
+        // Deprecated but kept to avoid breaking untyped calls if any
+        register(tempPhone, name, "123456", photo);
     };
 
     const updateAddress = (address: Address) => {
@@ -242,6 +304,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                 closeLogin,
                 checkUser,
                 verifyOtp,
+                login,
+                register,
+                verifyResetOtp,
+                resetPassword,
                 completeRegistration,
                 updateAddress,
                 addAddress,
