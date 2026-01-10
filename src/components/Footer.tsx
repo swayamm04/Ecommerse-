@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 const Footer = () => {
   return (
     <footer className="bg-[#EFC41A] text-gray-900 text-sm md:text-base">
-      <div className="container mx-auto px-4 py-8 md:py-16">
+      <div className="container mx-auto px-4 pt-8 pb-32 md:py-16">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
           {/* Brand */}
           <div className="col-span-2 md:col-span-1">
@@ -73,7 +73,7 @@ const Footer = () => {
         </div>
 
         {/* Bottom */}
-        <div className="border-t border-black/10 mt-8 md:mt-16 pt-4 md:pt-8 flex flex-col md:flex-row items-center justify-between text-[10px] md:text-sm font-semibold opacity-75">
+        <div className="border-t border-black/10 mt-8 md:mt-16 pt-4 md:pt-8 flex flex-col items-center justify-center gap-2 text-[10px] md:text-sm font-semibold opacity-75">
           <p>© {new Date().getFullYear()} HomeRun. All rights reserved.</p>
           <Link to="/admin/login" className="hover:text-black transition-colors opacity-50 hover:opacity-100">
             Admin Panel

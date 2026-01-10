@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,11 +13,12 @@ const AdminLogin = () => {
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
 
-    // Redirect if already logged in
-    if (localStorage.getItem("admin_token")) {
-        navigate("/admin");
-        return null;
-    }
+    // Redirect if already logged in - using useEffect to avoid render interruptions
+    useEffect(() => {
+        if (localStorage.getItem("admin_token")) {
+            navigate("/admin");
+        }
+    }, [navigate]);
 
     const handleLogin = (e: React.FormEvent) => {
         e.preventDefault();
